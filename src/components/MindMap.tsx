@@ -80,7 +80,7 @@ function AddBtn({ onClick }: { onClick: () => void }) {
         onClick();
       }}
       title="말풍선 띄우기"
-      className="nodrag absolute -right-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--line)] bg-white text-xs opacity-0 shadow-sm transition-opacity group-hover:opacity-100"
+      className="touch-show nodrag absolute -right-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--line)] bg-white text-xs opacity-0 shadow-sm transition-opacity group-hover:opacity-100"
     >
       💬
     </button>
@@ -113,7 +113,11 @@ export function MindMap(p: Props) {
       nodesDraggable={false}
       fitView
       fitViewOptions={{ padding: 0.2, maxZoom: 1.1 }}
-      minZoom={0.2}
+      minZoom={0.15}
+      maxZoom={3}
+      zoomOnPinch
+      panOnDrag
+      zoomOnDoubleClick
       proOptions={{ hideAttribution: true }}
     >
       <Background gap={24} size={1.2} color="var(--dot)" />

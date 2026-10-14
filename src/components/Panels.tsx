@@ -125,7 +125,7 @@ export function ThreadPanel({ bubble, where, replies, meId, onReply, onDelete, o
   };
 
   return (
-    <aside className="flex h-full w-[360px] shrink-0 flex-col border-l border-[var(--line)] bg-[var(--paper)]">
+    <aside className="flex h-full w-[360px] max-w-full shrink-0 flex-col border-l max-lg:absolute max-lg:right-0 max-lg:top-0 max-lg:z-30 max-lg:shadow-[-8px_0_24px_rgba(0,0,0,0.12)] border-[var(--line)] bg-[var(--paper)]">
       <header className="flex items-center justify-between border-b border-[var(--line)] px-5 py-3">
         <span className="truncate text-xs text-[var(--muted)]">📍 {where}</span>
         <button className={ghostBtnCls + " -mr-2 py-1"} onClick={onClose} aria-label="닫기">✕</button>

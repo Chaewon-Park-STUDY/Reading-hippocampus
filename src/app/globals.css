@@ -42,3 +42,10 @@ html, body {
 .react-flow__controls-button { background: var(--paper); border-color: var(--line); }
 .react-flow__minimap { border-radius: 12px; overflow: hidden; background: var(--paper); }
 .react-flow__node { font-family: var(--font-sans); }
+
+/* Touch screens have no hover: keep hover-only buttons visible and tap-friendly */
+@media (hover: none) {
+  .touch-show { opacity: 1 !important; }
+  .touch-big { min-width: 36px; min-height: 36px; }
+}
+html, body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }

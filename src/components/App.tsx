@@ -29,6 +29,8 @@ export default function App() {
   const [focus, setFocus] = useState<{ id: string; n: number } | null>(null);
   const [composer, setComposer] = useState<{ tocId: string | null } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  // Sidebar starts open on wide screens, folded on tablets in portrait / phones.
+  const [showSidebar, setShowSidebar] = useState(() => window.innerWidth >= 1024);
 
   const cur = useRef({ bookId, bubbleId });
   useEffect(() => {
@@ -172,6 +174,10 @@ export default function App() {
     <div className="flex h-dvh flex-col">
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-[var(--line)] bg-[var(--paper)] px-5">
         <div className="flex items-center gap-3">
+          <button className={ghostBtnCls + " touch-big -ml-2 px-2"} onClick={() => setShowSidebar((v) => !v)}
+            aria-label={showSidebar ? "서가 접기" : "서가 펼치기"} title={showSidebar ? "서가 접기" : "서가 펼치기"}>
+            ☰
+          </button>
           <span className="font-serif text-lg font-bold tracking-tight">독서해마</span>
           {store.mode === "local" && (
             <span className="rounded-full bg-[#F3E19B] px-2 py-0.5 text-[11px] font-medium text-[#5B4A12]"
@@ -204,8 +210,8 @@ export default function App() {
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <Sidebar
+      <div className="relative flex min-h-0 flex-1">
+        {showSidebar && <Sidebar
           books={books}
           selectedBookId={bookId}
           toc={toc}
@@ -221,9 +227,13 @@ export default function App() {
             await guard(store.addToc(bookId, parent, title));
             await loadBook(bookId);
           }}
-          onFocus={focusOn}
+          onFocus={(id) => {
+            // On tablets the sidebar overlays the map: fold it so the focused node is visible.
+            if (window.innerWidth < 1024) setShowSidebar(false);
+            focusOn(id);
+          }}
           onNewBubble={(tocId) => setComposer({ tocId })}
-        />
+        />}
 
         <main className="relative min-w-0 flex-1 bg-[var(--canvas)]">
           {book ? (

@@ -41,7 +41,7 @@ export function Sidebar(p: Props) {
   };
 
   return (
-    <aside className="flex h-full w-[300px] shrink-0 flex-col border-r border-[var(--line)] bg-[var(--paper)]">
+    <aside className="flex h-full w-[300px] shrink-0 flex-col border-r max-lg:absolute max-lg:left-0 max-lg:top-0 max-lg:z-30 max-lg:shadow-[8px_0_24px_rgba(0,0,0,0.12)] border-[var(--line)] bg-[var(--paper)]">
       <div className="border-b border-[var(--line)] px-5 pb-4 pt-5">
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">서가</h2>
@@ -137,7 +137,7 @@ function TocRow(props: { label: string; count: number; strong?: boolean; muted?:
         <span className="rounded-full bg-black/[0.06] px-1.5 text-[10px] tabular-nums text-[var(--muted)]">{props.count}</span>
       )}
       <button onClick={props.onBubble} title="말풍선 띄우기"
-        className="rounded px-1.5 text-sm text-[var(--muted)] opacity-0 transition-opacity hover:text-[var(--ink)] group-hover:opacity-100 focus:opacity-100">
+        className="touch-show touch-big rounded px-1.5 text-sm text-[var(--muted)] opacity-0 transition-opacity hover:text-[var(--ink)] group-hover:opacity-100 focus:opacity-100">
         💬
       </button>
     </div>
