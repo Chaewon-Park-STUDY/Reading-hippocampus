@@ -222,6 +222,11 @@ export default function App() {
             await loadBooks();
             selectBook(b.id);
           }}
+          meId={userId}
+          onUpdateBook={async (id, t, a) => {
+            await store.updateBook(id, t, a);
+            await loadBooks();
+          }}
           onAddToc={async (parent, title) => {
             if (!bookId) return;
             await guard(store.addToc(bookId, parent, title));

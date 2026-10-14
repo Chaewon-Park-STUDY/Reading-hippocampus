@@ -11,6 +11,8 @@ type Props = {
   bubbleCount: Record<string, number>;
   onSelectBook: (id: string) => void;
   onAddBook: (title: string, author: string | null) => Promise<void>;
+  meId: string;
+  onUpdateBook: (id: string, title: string, author: string | null) => Promise<void>;
   onAddToc: (parentId: string | null, title: string) => Promise<void>;
   onFocus: (nodeId: string) => void;
   onNewBubble: (tocId: string | null) => void;
@@ -22,6 +24,7 @@ export function Sidebar(p: Props) {
   const [author, setAuthor] = useState("");
   const [query, setQuery] = useState("");
   const [err, setErr] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const shown = p.books.filter((b) =>
     `${b.title} ${b.author ?? ""}`.toLowerCase().includes(query.trim().toLowerCase()),
@@ -53,7 +56,7 @@ export function Sidebar(p: Props) {
           <div className="space-y-2">
             <input className={inputCls} placeholder="책 제목" value={title} autoFocus
               onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && submitBook()} />
-            <input className={inputCls} placeholder="저자 (선택)" value={author}
+            <input className={inputCls} placeholder="작가 (선택)" value={author}
               onChange={(e) => setAuthor(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && submitBook()} />
             {err && <p className="text-xs text-[#B4483A]">{err}</p>}
             <button className={btnCls + " w-full"} disabled={!title.trim()} onClick={submitBook}>서가에 꽂기</button>
@@ -71,8 +74,17 @@ export function Sidebar(p: Props) {
         )}
         {shown.map((b) => {
           const open = b.id === p.selectedBookId;
+          if (editingId === b.id)
+            return <BookEditor key={b.id} book={b} onCancel={() => setEditingId(null)}
+              onSave={async (t, a) => { await p.onUpdateBook(b.id, t, a); setEditingId(null); }} />;
           return (
-            <div key={b.id} className="mb-1">
+            <div key={b.id} className="group/book relative mb-1">
+              {open && b.created_by === p.meId && (
+                <button onClick={() => setEditingId(b.id)} title="책 정보 수정" aria-label="책 정보 수정"
+                  className="touch-show touch-big absolute right-1 top-1.5 z-10 rounded-md px-2 py-1 text-xs text-[var(--muted)] opacity-0 transition-opacity hover:bg-black/5 hover:text-[var(--ink)] group-hover/book:opacity-100 focus:opacity-100">
+                  ✎ 수정
+                </button>
+              )}
               <button
                 onClick={() => p.onSelectBook(b.id)}
                 className={`flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left transition-colors ${
@@ -80,7 +92,7 @@ export function Sidebar(p: Props) {
                 }`}
               >
                 <span className={`mt-1 text-[10px] text-[var(--muted)] transition-transform ${open ? "rotate-90" : ""}`}>▶</span>
-                <span className="min-w-0">
+                <span className="min-w-0 pr-12">
                   <span className="font-serif block truncate text-[15px] font-semibold leading-snug">{b.title}</span>
                   {b.author && <span className="block truncate text-xs text-[var(--muted)]">{b.author}</span>}
                 </span>
@@ -165,5 +177,43 @@ function AddInline({ placeholder, onAdd }: { placeholder: string; onAdd: (t: str
       placeholder={`+ ${placeholder}`}
       className="my-0.5 w-full rounded-md bg-transparent px-2 py-1.5 text-[13px] outline-none placeholder:text-[var(--muted)]/70 focus:bg-white"
     />
+  );
+}
+
+function BookEditor({ book, onSave, onCancel }: {
+  book: Book;
+  onSave: (title: string, author: string | null) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const [title, setTitle] = useState(book.title);
+  const [author, setAuthor] = useState(book.author ?? "");
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const submit = async () => {
+    if (!title.trim() || busy) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      await onSave(title, author || null);
+    } catch (e) {
+      setErr((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const onKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.nativeEvent.isComposing) submit();
+    if (e.key === "Escape") onCancel();
+  };
+  return (
+    <div className="mb-1 space-y-2 rounded-lg bg-black/[0.04] p-2">
+      <input className={inputCls} value={title} autoFocus placeholder="책 제목" onChange={(e) => setTitle(e.target.value)} onKeyDown={onKey} />
+      <input className={inputCls} value={author} placeholder="작가 (선택)" onChange={(e) => setAuthor(e.target.value)} onKeyDown={onKey} />
+      {err && <p className="text-xs text-[#B4483A]">{err}</p>}
+      <div className="flex justify-end gap-1">
+        <button className={ghostBtnCls + " py-1.5"} onClick={onCancel}>취소</button>
+        <button className={btnCls + " py-1.5"} disabled={!title.trim() || busy} onClick={submit}>저장</button>
+      </div>
+    </div>
   );
 }

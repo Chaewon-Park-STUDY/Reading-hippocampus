@@ -69,6 +69,8 @@ export interface Store {
 
   listBooks(): Promise<Book[]>;
   addBook(title: string, author: string | null): Promise<Book>;
+  /** Only the person who added the book can rename it. */
+  updateBook(id: string, title: string, author: string | null): Promise<Book>;
 
   listToc(bookId: string): Promise<TocNode[]>;
   addToc(bookId: string, parentId: string | null, title: string): Promise<TocNode>;

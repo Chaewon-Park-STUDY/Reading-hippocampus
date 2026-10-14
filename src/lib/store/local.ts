@@ -107,6 +107,18 @@ export class LocalStore implements Store {
     return b;
   }
 
+  async updateBook(id: string, title: string, author: string | null) {
+    const norm = (s: string | null) => (s ?? "").trim().toLowerCase();
+    const b = this.db.books.find((x) => x.id === id);
+    if (!b || b.created_by !== this.db.me) throw new Error("내가 등록한 책만 수정할 수 있어요.");
+    if (this.db.books.some((x) => x.id !== id && norm(x.title) === norm(title) && norm(x.author) === norm(author)))
+      throw new Error("같은 제목·작가의 책이 이미 있어요.");
+    b.title = title.trim();
+    b.author = author?.trim() || null;
+    this.emit("books");
+    return { ...b };
+  }
+
   async listToc(bookId: string) {
     return this.db.toc
       .filter((n) => n.book_id === bookId)

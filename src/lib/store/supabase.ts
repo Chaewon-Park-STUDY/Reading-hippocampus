@@ -55,6 +55,19 @@ export class SupabaseStore implements Store {
     return must(res) as Book;
   }
 
+  async updateBook(id: string, title: string, author: string | null) {
+    const res = await this.sb
+      .from("books")
+      .update({ title: title.trim(), author: author?.trim() || null })
+      .eq("id", id)
+      .select("*")
+      .maybeSingle();
+    if (res.error?.code === "23505") throw new Error("같은 제목·작가의 책이 이미 있어요.");
+    const row = must(res) as Book | null;
+    if (!row) throw new Error("내가 등록한 책만 수정할 수 있어요.");
+    return row;
+  }
+
   async listToc(bookId: string) {
     return must(
       await this.sb.from("toc_nodes").select("*").eq("book_id", bookId).order("position").order("created_at"),
