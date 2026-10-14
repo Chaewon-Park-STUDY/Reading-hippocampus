@@ -1,6 +1,17 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&display=swap");
 @import "tailwindcss";
+
+@font-face {
+  font-family: "NanumBarunGothic";
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWeb.woff") format("woff"), url("https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWeb.ttf") format("truetype");
+}
+@font-face {
+  font-family: "NanumBarunGothic";
+  font-weight: 600 800;
+  font-display: swap;
+  src: url("https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWebBold.woff") format("woff"), url("https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothic/NanumBarunGothicWebBold.ttf") format("truetype");
+}
 
 :root {
   --paper: #fbf8f3;
@@ -12,8 +23,8 @@
 }
 
 @theme inline {
-  --font-sans: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  --font-serif: "Noto Serif KR", "Nanum Myeongjo", serif;
+  --font-sans: "NanumBarunGothic", "Nanum Barun Gothic", system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-serif: var(--font-sans);
 }
 
 html, body {
